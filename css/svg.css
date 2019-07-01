@@ -1,0 +1,20 @@
+/* Svg Builder */
+svg.svg-builder {
+  cursor: pointer;
+}
+
+svg.svg-builder rect {
+  stroke: black;
+}
+
+svg.svg-builder:hover rect,
+svg.svg-builder.selected rect {
+  stroke: blue;
+}
+
+svg.svg-builder.disabled rect,
+svg.svg-builder.disabled:hover rect,
+svg.svg-builder.selected.disabled rect {
+  stroke: gray;
+  cursor: default;
+}
