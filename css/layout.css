@@ -9,6 +9,8 @@ html, body {
 
 .main {
   padding: 12px;
+  display: flex;
+  justify-content: space-around;
 }
 
 .pattern-holder {

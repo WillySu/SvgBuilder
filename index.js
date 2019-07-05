@@ -2,26 +2,38 @@
   const width = 128;
   const height = 128;
   const numberOfGeometry = 2;
-  const squareSvgBuilder = new SvgBuilder({
+  let galleryRows = 3;
+  let galleryCols = 3;
+  const { getCentricSquarePatterns, getGalleryThumbnailPatterns } = SvgBuilderPatterns;
+  const centricSquareSvgBuilder = new SvgBuilder({
     width,
     height,
-    elements: SvgBuilderPatterns.getBorderPatterns({
+    elements: getCentricSquarePatterns({
       width, height, numberOfGeometry
     })
   });
+  const galleryThumbnailSvgBuilder = new SvgBuilder({
+    width,
+    height,
+    elements: getGalleryThumbnailPatterns({
+      width, height, rows: galleryRows, cols: galleryCols
+    })
+  });
+  const widthField = {
+    label: 'Width',
+    attrs: { name: 'width', min: 1, type: 'number', value: width }
+  };
+  const heightField = {
+    label: 'Height',
+    attrs: { name: 'height', min: 1, type: 'number', value: height }
+  };
   const PATTERNS = [
     {
-      svgBuilder: squareSvgBuilder,
+      svgBuilder: centricSquareSvgBuilder,
       formBuilder: new FormBuilder({
         fields: [
-          {
-            label: 'Width',
-            attrs: { name: 'width', min: 1, type:'number', value: width }
-          },
-          {
-            label: 'Height',
-            attrs: { name: 'height', min: 1, type:'number', value: height }
-          },
+          widthField,
+          heightField,
           {
             label: 'Number',
             attrs: { name: 'numberOfGeometry', min: 1, type:'number', value: numberOfGeometry }
@@ -29,13 +41,43 @@
         ],
         callback: (field, value) => {
           if (field === 'numberOfGeometry') {
-            const { width: w, height: h } = squareSvgBuilder;
-            const elements = SvgBuilderPatterns.getBorderPatterns({
+            const { width: w, height: h } = centricSquareSvgBuilder;
+            const elements = getGalleryThumbnailPatterns({
               width: w, height: h, numberOfGeometry: value
             });
-            squareSvgBuilder.update({ field: 'elements', value: elements });
+            centricSquareSvgBuilder.update({ field: 'elements', value: elements });
           } else {
-            squareSvgBuilder.update({ field, value });
+            centricSquareSvgBuilder.update({ field, value });
+          }
+        }
+      })
+    },
+    {
+      svgBuilder: galleryThumbnailSvgBuilder,
+      formBuilder: new FormBuilder({
+        fields: [
+          widthField,
+          heightField,
+          {
+            label: 'Rows',
+            attrs: { name: 'rows', min: 1, type:'number', value: galleryRows }
+          },
+          {
+            label: 'Cols',
+            attrs: { name: 'cols', min: 1, type:'number', value: galleryCols }
+          }
+        ],
+        callback: (field, value) => {
+          if (field === 'rows' || field === 'cols') {
+            const { width: w, height: h } = galleryThumbnailSvgBuilder;
+            galleryRows = field === 'rows' ? value : galleryRows;
+            galleryCols = field === 'cols' ? value : galleryCols;
+            const elements = getGalleryThumbnailPatterns({
+              width: w, height: h, rows: galleryRows, cols: galleryCols
+            });
+            galleryThumbnailSvgBuilder.update({ field: 'elements', value: elements });
+          } else {
+            galleryThumbnailSvgBuilder.update({ field, value });
           }
         }
       })
